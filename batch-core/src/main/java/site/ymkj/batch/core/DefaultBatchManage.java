@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import lombok.extern.slf4j.Slf4j;
+import site.ymkj.batch.core.config.BatchConfig;
 import site.ymkj.batch.core.entity.BatchContext;
 import site.ymkj.batch.core.entity.BatchEntity;
 import site.ymkj.batch.core.entity.BatchStatusEnum;
@@ -33,11 +34,17 @@ public class DefaultBatchManage implements IBatchManager {
 
   private ExecutorService executors;
 
-  public DefaultBatchManage(IBatchStore batchStore) {
+  private BatchConfig batchConfig;
+
+  public DefaultBatchManage(IBatchStore batchStore, BatchConfig batchConfig) {
     this.batchStore = batchStore;
-    executors = new ThreadPoolExecutor(30, 30, 60L, TimeUnit.SECONDS,
+    executors = new ThreadPoolExecutor(batchConfig.getThreadMaxSize(), batchConfig.getThreadMaxSize(), 60L, TimeUnit.SECONDS,
         new LinkedBlockingDeque<Runnable>(), new ThreadPoolExecutor.AbortPolicy());
-    ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(true);
+    ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(batchConfig.isAllowThreadTimeOut());
+  }
+
+  public DefaultBatchManage(IBatchStore batchStore) {
+    this(batchStore, new BatchConfig());
   }
 
   @Override
