@@ -8,7 +8,7 @@
 5、任务查询管理dashboard（未来）  
 ## 环境准备
 ### 1、spring 
-   向spring容器中注入 IBatchStore 的实现  默认实现了 基于map内存的存储 MemoryStore，（数据库 Redis等其它方式的存储待实现）
+   向spring容器中注入 IBatchStore 的实现  默认实现了 基于map内存的存储 MemoryStore，（数据库 Redis等其它方式的存储待实现）  
    向spring容器中注入 IBatchManager的实现，默认实现：DefaultBatchManage，manager需要注入store
 ### 2、普通Java环境
    直接new 依赖注入即可
