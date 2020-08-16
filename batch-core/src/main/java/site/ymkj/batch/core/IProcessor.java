@@ -3,6 +3,7 @@ package site.ymkj.batch.core;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import site.ymkj.batch.core.entity.BatchContext;
 import site.ymkj.batch.core.entity.BatchResult;
@@ -16,6 +17,7 @@ public interface IProcessor<C extends ProcessArgs> extends Callable<List<StageRe
 
   /**
    * 处理器类型
+   *
    * @return
    */
   String type();
@@ -42,12 +44,14 @@ public interface IProcessor<C extends ProcessArgs> extends Callable<List<StageRe
 
   /**
    * 查询批处理结果
+   *
    * @return
    */
   BatchResult queryProcessResult();
 
   /**
    * 获得执行上下文
+   *
    * @return
    */
   BatchContext getBatchContext();
@@ -60,6 +64,13 @@ public interface IProcessor<C extends ProcessArgs> extends Callable<List<StageRe
   C getProcessArgs();
 
 
-  void setBatchManage(IBatchManage batchManage);
+  void setBatchManage(IBatchManager batchManage);
+
+  /**
+   * 获得future
+   *
+   * @return
+   */
+  Future<List<StageResult>> getFuture();
 
 }

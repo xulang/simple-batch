@@ -6,15 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import lombok.extern.slf4j.Slf4j;
+import site.ymkj.batch.core.config.BatchConfig;
 import site.ymkj.batch.core.entity.BatchContext;
 import site.ymkj.batch.core.entity.BatchEntity;
 import site.ymkj.batch.core.entity.BatchStatusEnum;
@@ -25,7 +23,7 @@ import site.ymkj.batch.core.entity.StageResult;
  * 批处理管理器
  */
 @Slf4j
-public class DefaultBatchManage implements IBatchManage {
+public class DefaultBatchManage implements IBatchManager {
 
   private IBatchStore batchStore;
 
@@ -34,11 +32,19 @@ public class DefaultBatchManage implements IBatchManage {
    */
   private Map<String, IProcessor> processorMap = new HashMap<>();
 
-  private ExecutorService executors = new ThreadPoolExecutor(30, 50, 60L, TimeUnit.SECONDS,
-      new LinkedBlockingDeque<>(5), new ThreadPoolExecutor.AbortPolicy());
+  private ExecutorService executors;
+
+  private BatchConfig batchConfig;
+
+  public DefaultBatchManage(IBatchStore batchStore, BatchConfig batchConfig) {
+    this.batchStore = batchStore;
+    executors = new ThreadPoolExecutor(batchConfig.getThreadMaxSize(), batchConfig.getThreadMaxSize(), 60L, TimeUnit.SECONDS,
+        new LinkedBlockingDeque<Runnable>(), new ThreadPoolExecutor.AbortPolicy());
+    ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(batchConfig.isAllowThreadTimeOut());
+  }
 
   public DefaultBatchManage(IBatchStore batchStore) {
-    this.batchStore = batchStore;
+    this(batchStore, new BatchConfig());
   }
 
   @Override
@@ -57,7 +63,10 @@ public class DefaultBatchManage implements IBatchManage {
     batchStore.insertOne(batchEntity);
     // 加入当前的管理
     processorMap.put(processor.name(), processor);
-    executors.submit(processor);
+    Future<List<StageResult>> future = executors.submit(processor);
+    if (processor instanceof AbstractProcessor) {
+      ((AbstractProcessor) processor).setFuture(future);
+    }
     return processor.name();
   }
 

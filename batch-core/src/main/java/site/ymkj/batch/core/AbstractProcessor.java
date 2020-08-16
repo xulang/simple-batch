@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import com.alibaba.fastjson.JSON;
 
@@ -43,7 +44,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
    */
   private Class<C> processArgsClazz;
 
-  private IBatchManage batchManage;
+  private IBatchManager batchManage;
 
   private String name;
 
@@ -51,6 +52,8 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
    * 批处理当前状态
    */
   private BatchStatusEnum batchStatusEnum;
+
+  private Future<List<StageResult>> future;
 
   public AbstractProcessor(C processArgs) {
     this.processArgsClazz = (Class<C>) ((ParameterizedType) getClass()
@@ -229,7 +232,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
     return name;
   }
 
-  public void setBatchManage(IBatchManage batchManage) {
+  public void setBatchManage(IBatchManager batchManage) {
     this.batchManage = batchManage;
     for (StageResult stageResult : stageResults) {
       stageResult.setBatchManage(batchManage);
@@ -239,7 +242,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
     batchContext.setProcessor(this);
   }
 
-  public IBatchManage getBatchManage() {
+  public IBatchManager getBatchManage() {
     return batchManage;
   }
 
@@ -249,5 +252,14 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
 
   public void setBatchStatusEnum(BatchStatusEnum batchStatusEnum) {
     this.batchStatusEnum = batchStatusEnum;
+  }
+
+  public void setFuture(Future<List<StageResult>> future) {
+    this.future = future;
+  }
+
+  @Override
+  public Future<List<StageResult>> getFuture() {
+    return future;
   }
 }

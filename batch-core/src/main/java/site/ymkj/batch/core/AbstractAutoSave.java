@@ -7,11 +7,11 @@ import site.ymkj.batch.core.entity.BatchEntity;
  */
 public abstract class AbstractAutoSave {
 
-  private transient IBatchManage batchManage;
+  private transient IBatchManager batchManage;
 
   protected transient IProcessor processor;
 
-  public void setBatchManage(IBatchManage batchManage) {
+  public void setBatchManage(IBatchManager batchManage) {
     this.batchManage = batchManage;
   }
 
