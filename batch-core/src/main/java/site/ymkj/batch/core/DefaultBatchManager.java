@@ -23,7 +23,7 @@ import site.ymkj.batch.core.entity.StageResult;
  * 批处理管理器
  */
 @Slf4j
-public class DefaultBatchManage implements IBatchManager {
+public class DefaultBatchManager implements IBatchManager {
 
   private IBatchStore batchStore;
 
@@ -36,14 +36,14 @@ public class DefaultBatchManage implements IBatchManager {
 
   private BatchConfig batchConfig;
 
-  public DefaultBatchManage(IBatchStore batchStore, BatchConfig batchConfig) {
+  public DefaultBatchManager(IBatchStore batchStore, BatchConfig batchConfig) {
     this.batchStore = batchStore;
     executors = new ThreadPoolExecutor(batchConfig.getThreadMaxSize(), batchConfig.getThreadMaxSize(), 60L, TimeUnit.SECONDS,
         new LinkedBlockingDeque<Runnable>(), new ThreadPoolExecutor.AbortPolicy());
     ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(batchConfig.isAllowThreadTimeOut());
   }
 
-  public DefaultBatchManage(IBatchStore batchStore) {
+  public DefaultBatchManager(IBatchStore batchStore) {
     this(batchStore, new BatchConfig());
   }
 
