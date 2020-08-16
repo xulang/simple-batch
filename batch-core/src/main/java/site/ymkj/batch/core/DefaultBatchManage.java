@@ -22,7 +22,7 @@ import site.ymkj.batch.core.entity.StageResult;
  * 批处理管理器
  */
 @Slf4j
-public class DefaultBatchManage implements IBatchManage {
+public class DefaultBatchManage implements IBatchManager {
 
   private IBatchStore batchStore;
 

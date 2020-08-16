@@ -64,7 +64,7 @@ public interface IProcessor<C extends ProcessArgs> extends Callable<List<StageRe
   C getProcessArgs();
 
 
-  void setBatchManage(IBatchManage batchManage);
+  void setBatchManage(IBatchManager batchManage);
 
   /**
    * 获得future

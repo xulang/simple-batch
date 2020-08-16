@@ -5,7 +5,7 @@ import site.ymkj.batch.core.entity.BatchEntity;
 /**
  *
  */
-public interface IBatchManage {
+public interface IBatchManager {
 
   /**
    * 提交批处理，并持久化

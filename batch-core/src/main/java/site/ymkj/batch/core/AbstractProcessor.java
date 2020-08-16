@@ -44,7 +44,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
    */
   private Class<C> processArgsClazz;
 
-  private IBatchManage batchManage;
+  private IBatchManager batchManage;
 
   private String name;
 
@@ -232,7 +232,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
     return name;
   }
 
-  public void setBatchManage(IBatchManage batchManage) {
+  public void setBatchManage(IBatchManager batchManage) {
     this.batchManage = batchManage;
     for (StageResult stageResult : stageResults) {
       stageResult.setBatchManage(batchManage);
@@ -242,7 +242,7 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
     batchContext.setProcessor(this);
   }
 
-  public IBatchManage getBatchManage() {
+  public IBatchManager getBatchManage() {
     return batchManage;
   }
 
