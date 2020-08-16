@@ -6,10 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -34,11 +31,13 @@ public class DefaultBatchManage implements IBatchManage {
    */
   private Map<String, IProcessor> processorMap = new HashMap<>();
 
-  private ExecutorService executors = new ThreadPoolExecutor(30, 50, 60L, TimeUnit.SECONDS,
-      new LinkedBlockingDeque<>(5), new ThreadPoolExecutor.AbortPolicy());
+  private ExecutorService executors;
 
   public DefaultBatchManage(IBatchStore batchStore) {
     this.batchStore = batchStore;
+    executors = new ThreadPoolExecutor(30, 30, 60L, TimeUnit.SECONDS,
+        new LinkedBlockingDeque<Runnable>(), new ThreadPoolExecutor.AbortPolicy());
+    ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(true);
   }
 
   @Override
@@ -57,7 +56,10 @@ public class DefaultBatchManage implements IBatchManage {
     batchStore.insertOne(batchEntity);
     // 加入当前的管理
     processorMap.put(processor.name(), processor);
-    executors.submit(processor);
+    Future<List<StageResult>> future = executors.submit(processor);
+    if (processor instanceof AbstractProcessor) {
+      ((AbstractProcessor) processor).setFuture(future);
+    }
     return processor.name();
   }
 
