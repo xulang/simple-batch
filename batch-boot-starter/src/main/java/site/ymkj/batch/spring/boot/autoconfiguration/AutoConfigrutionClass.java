@@ -24,6 +24,17 @@ public class AutoConfigrutionClass {
   @Autowired
   private IBatchStore batchStore;
 
+  public AutoConfigrutionClass() {
+
+  }
+
+  @ConditionalOnMissingBean
+  @Bean
+  @ConditionalOnClass(MemoryStore.class)
+  public IBatchStore batchStore() {
+    return new MemoryStore();
+  }
+
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnBean(IBatchStore.class)
@@ -36,10 +47,5 @@ public class AutoConfigrutionClass {
     }
   }
 
-  @ConditionalOnMissingBean
-  @Bean
-  @ConditionalOnClass(MemoryStore.class)
-  public IBatchStore batchStore() {
-    return new MemoryStore();
-  }
+
 }
