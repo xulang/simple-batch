@@ -41,6 +41,7 @@ public class DefaultBatchManager implements IBatchManager {
     executors = new ThreadPoolExecutor(batchConfig.getThreadMaxSize(), batchConfig.getThreadMaxSize(), 60L, TimeUnit.SECONDS,
         new LinkedBlockingDeque<Runnable>(), new ThreadPoolExecutor.AbortPolicy());
     ((ThreadPoolExecutor) executors).allowCoreThreadTimeOut(batchConfig.isAllowThreadTimeOut());
+    this.batchConfig = batchConfig;
   }
 
   public DefaultBatchManager(IBatchStore batchStore) {
