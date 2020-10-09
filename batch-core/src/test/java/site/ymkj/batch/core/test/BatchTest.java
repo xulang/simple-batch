@@ -1,7 +1,7 @@
 package site.ymkj.batch.core.test;
 
 import org.junit.Test;
-import site.ymkj.batch.core.DefaultBatchManage;
+import site.ymkj.batch.core.DefaultBatchManager;
 import site.ymkj.batch.core.IBatchManager;
 import site.ymkj.batch.core.IProcessor;
 import site.ymkj.batch.core.entity.StageResult;
@@ -16,7 +16,7 @@ public class BatchTest {
 
 	@Test
 	public void test() throws ExecutionException, InterruptedException {
-		IBatchManager batchManage = new DefaultBatchManage(new MemoryStore());
+		IBatchManager batchManage = new DefaultBatchManager(new MemoryStore());
 		IProcessor<TestArgs> processor = new TestProcessor(new TestArgs("test"));
 		String batchId = batchManage.submitBatch(processor);
 		// 同步等待批处理结果

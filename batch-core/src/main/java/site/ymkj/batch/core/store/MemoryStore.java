@@ -4,9 +4,11 @@ import site.ymkj.batch.core.IBatchStore;
 import site.ymkj.batch.core.entity.BatchEntity;
 import site.ymkj.batch.core.entity.BatchStatusEnum;
 
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class MemoryStore implements IBatchStore {
 
-  private Map<String, BatchEntity> cache = new HashMap<>();
+  private Map<String, BatchEntity> cache = new ConcurrentHashMap<>();
 
   @Override
   public void insertOne(BatchEntity batchEntity) {
