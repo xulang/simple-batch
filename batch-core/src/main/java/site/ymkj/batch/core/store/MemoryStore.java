@@ -1,19 +1,21 @@
 package site.ymkj.batch.core.store;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import site.ymkj.batch.core.IBatchStore;
 import site.ymkj.batch.core.entity.BatchEntity;
 import site.ymkj.batch.core.entity.BatchStatusEnum;
 
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
  * 内存存储
  */
+@Slf4j
 public class MemoryStore implements IBatchStore {
 
   private Map<String, BatchEntity> cache = new ConcurrentHashMap<>();
@@ -25,7 +27,34 @@ public class MemoryStore implements IBatchStore {
 
   @Override
   public void saveByName(String name, BatchEntity batchEntity) {
-    cache.put(batchEntity.getName(), batchEntity);
+    BatchEntity old = cache.get(name);
+    try {
+      copyNotNullProperty(batchEntity, old);
+    } catch (Exception e) {
+      log.error("拷贝属性出错", e);
+    }
+    cache.put(name, old);
+  }
+
+  public static String[] copyNotNullProperty(Object source, Object dest) {
+    Field[] fields = source.getClass().getDeclaredFields();
+    Set<String> names = new HashSet<>();
+    for (Field field : fields) {
+      if (Modifier.isFinal(field.getModifiers())) {
+        continue;
+      }
+      field.setAccessible(true);
+      try {
+        Object value = field.get(source);
+        if (value != null) {
+          field.set(dest, value);
+          names.add(field.getName());
+        }
+      } catch (IllegalAccessException e) {
+        log.error("获取属性值失败", e);
+      }
+    }
+    return names.toArray(new String[names.size()]);
   }
 
   @Override

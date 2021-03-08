@@ -1,6 +1,10 @@
 package site.ymkj.batch.core;
 
 import site.ymkj.batch.core.entity.BatchEntity;
+import site.ymkj.batch.core.entity.StageResult;
+
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  *
@@ -13,7 +17,7 @@ public interface IBatchManager {
    * @param processor
    * @return 返回批处理id
    */
-  String submitBatch(IProcessor processor);
+  Future<List<StageResult>> submitBatch(IProcessor processor);
 
   /**
    * 通过批处理名称找到批处理对象
