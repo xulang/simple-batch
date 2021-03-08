@@ -66,11 +66,4 @@ public interface IProcessor<C extends ProcessArgs> extends Callable<List<StageRe
 
   void setBatchManage(IBatchManager batchManage);
 
-  /**
-   * 获得future
-   *
-   * @return
-   */
-  Future<List<StageResult>> getFuture();
-
 }

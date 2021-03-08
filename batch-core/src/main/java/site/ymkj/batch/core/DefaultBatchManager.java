@@ -49,7 +49,7 @@ public class DefaultBatchManager implements IBatchManager {
   }
 
   @Override
-  public String submitBatch(IProcessor processor) {
+  public Future<List<StageResult>> submitBatch(IProcessor processor) {
     processor.setBatchManage(this);
     // 新增数据库记录
     BatchEntity batchEntity = new BatchEntity();
@@ -65,10 +65,7 @@ public class DefaultBatchManager implements IBatchManager {
     // 加入当前的管理
     processorMap.put(processor.name(), processor);
     Future<List<StageResult>> future = executors.submit(processor);
-    if (processor instanceof AbstractProcessor) {
-      ((AbstractProcessor) processor).setFuture(future);
-    }
-    return processor.name();
+    return future;
   }
 
   @Override

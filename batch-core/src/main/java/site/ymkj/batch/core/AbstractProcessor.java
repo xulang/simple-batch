@@ -53,8 +53,6 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
    */
   private BatchStatusEnum batchStatusEnum;
 
-  private Future<List<StageResult>> future;
-
   public AbstractProcessor(C processArgs) {
     this.processArgsClazz = (Class<C>) ((ParameterizedType) getClass()
         .getGenericSuperclass()).getActualTypeArguments()[0];
@@ -254,12 +252,4 @@ public abstract class AbstractProcessor<C extends ProcessArgs> implements IProce
     this.batchStatusEnum = batchStatusEnum;
   }
 
-  public void setFuture(Future<List<StageResult>> future) {
-    this.future = future;
-  }
-
-  @Override
-  public Future<List<StageResult>> getFuture() {
-    return future;
-  }
 }

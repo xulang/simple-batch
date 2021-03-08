@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class BatchTest {
 
@@ -18,9 +19,10 @@ public class BatchTest {
 	public void test() throws ExecutionException, InterruptedException {
 		IBatchManager batchManage = new DefaultBatchManager(new MemoryStore());
 		IProcessor<TestArgs> processor = new TestProcessor(new TestArgs("test"));
-		String batchId = batchManage.submitBatch(processor);
+		Future<List<StageResult>> future = batchManage.submitBatch(processor);
 		// 同步等待批处理结果
-		List<StageResult> stageResults = processor.getFuture().get();
+		List<StageResult> stageResults = future.get();
+		batchManage.getProcessorByName(processor.name());
 		assertTrue(stageResults != null);
 		assertTrue(stageResults.size() == 2);
 		assertTrue(stageResults.get(0).getStageReturn().equals("stage1test"));
